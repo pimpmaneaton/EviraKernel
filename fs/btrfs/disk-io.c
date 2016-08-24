@@ -766,10 +766,6 @@ static noinline int check_leaf(struct btrfs_root *root,
 static int check_node(struct btrfs_root *root, struct extent_buffer *node)
 {
 	unsigned long nr = btrfs_header_nritems(node);
-	struct btrfs_key key, next_key;
-	int slot;
-	u64 bytenr;
-	int ret = 0;
 
 	if (nr == 0 || nr > BTRFS_NODEPTRS_PER_BLOCK(root)) {
 		btrfs_crit(root->fs_info,
@@ -777,26 +773,7 @@ static int check_node(struct btrfs_root *root, struct extent_buffer *node)
 			   node->start, root->objectid, nr);
 		return -EIO;
 	}
-
-	for (slot = 0; slot < nr - 1; slot++) {
-		bytenr = btrfs_node_blockptr(node, slot);
-		btrfs_node_key_to_cpu(node, &key, slot);
-		btrfs_node_key_to_cpu(node, &next_key, slot + 1);
-
-		if (!bytenr) {
-			CORRUPT("invalid item slot", node, root, slot);
-			ret = -EIO;
-			goto out;
-		}
-
-		if (btrfs_comp_cpu_keys(&key, &next_key) >= 0) {
-			CORRUPT("bad key order", node, root, slot);
-			ret = -EIO;
-			goto out;
-		}
-	}
-out:
-	return ret;
+	return 0;
 }
 
 static int btree_readpage_end_io_hook(struct btrfs_io_bio *io_bio,
@@ -869,6 +846,9 @@ static int btree_readpage_end_io_hook(struct btrfs_io_bio *io_bio,
 		set_bit(EXTENT_BUFFER_CORRUPT, &eb->bflags);
 		ret = -EIO;
 	}
+
+	if (found_level > 0 && check_node(root, eb))
+		ret = -EIO;
 
 	if (!ret)
 		set_extent_buffer_uptodate(eb);
