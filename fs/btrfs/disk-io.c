@@ -684,7 +684,7 @@ static noinline int check_leaf(struct btrfs_root *root,
 				CORRUPT("non-root leaf's nritems is 0",
 					leaf, check_root, 0);
 				free_extent_buffer(eb);
-				return -EUCLEAN;
+				return -EIO;
 			}
 			free_extent_buffer(eb);
 		}
