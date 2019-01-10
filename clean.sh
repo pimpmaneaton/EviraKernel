@@ -1,3 +1,3 @@
 #!/bin/bash
-make ARCH=arm64 distclean
+make clean && make mrproper
 rm -rf out/
