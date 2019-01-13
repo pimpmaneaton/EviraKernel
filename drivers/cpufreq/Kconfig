@@ -78,7 +78,9 @@ config CPU_FREQ_DEFAULT_GOV_USERSPACE
 	  you to set the CPU frequency manually or when a userspace 
 	  program shall be able to set the CPU dynamically without having
 	  to enable the userspace governor manually.
+	  
 
+	  
 config CPU_FREQ_DEFAULT_GOV_ONDEMAND
 	bool "ondemand"
 	select CPU_FREQ_GOV_ONDEMAND
@@ -103,7 +105,11 @@ config CPU_FREQ_DEFAULT_GOV_CONSERVATIVE
 	  governor. If unsure have a look at the help section of the
 	  driver. Fallback governor will be the performance governor.
 	  
-
+config CPU_FREQ_DEFAULT_GOV_LIONHEART
+            bool "lionheart"
+            select CPU_FREQ_GOV_LIONHEART
+            help
+              Use the CPUFreq governor 'lionheart' as default.
 	  
 config CPU_FREQ_DEFAULT_GOV_DARKUTIL
 	bool "darkutil"
@@ -197,7 +203,10 @@ config CPU_FREQ_GOV_USERSPACE
 	  For details, take a look at <file:Documentation/cpu-freq/>.
 
 	  If in doubt, say Y.
+	  
+	  
 
+	  
 config CPU_FREQ_GOV_ONDEMAND
 	tristate "'ondemand' cpufreq policy governor"
 	select CPU_FREQ_GOV_COMMON
@@ -230,6 +239,13 @@ config CPU_FREQ_GOV_INTERACTIVE
 
 	  If in doubt, say N.
 	  
+config CPU_FREQ_GOV_LIONHEART
+           tristate "'lionheart' cpufreq governor"
+           depends on CPU_FREQ
+           help
+             lionheart' - a "smart" optimized governor!
+             If in doubt, say N.
+	   
 config CPU_FREQ_GOV_BLU_SCHEDUTIL
 	tristate "'blu_schedutil' cpufreq policy governor"
 	depends on CPU_FREQ
